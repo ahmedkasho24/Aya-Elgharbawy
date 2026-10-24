@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nitrite in Drinking Water: From Sample Bottle to Result</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ---------- Design tokens: white + light blue; pink is used ONLY for the nitrite-positive azo dye ---------- */
+:root{--pink:#f0508a;--pinkbg:#fff0f6;--pinkline:#f7a1c0;--white:#fff;--ice:#f0f9ff;--mist:#dff2fd;--sky:#bfe5fa;--azure:#5bb8ec;--deep:#1e86c4;--ink:#0d4d75}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--white);color:var(--ink);font:17px/1.7 "Plus Jakarta Sans",system-ui,Arial,sans-serif}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+h1,h2,h3{margin:0;line-height:1.15}
+h1{font-size:clamp(34px,5.6vw,66px);font-weight:800;letter-spacing:-.03em;max-width:14ch}
+h2{font-size:clamp(26px,3.6vw,40px);font-weight:800;letter-spacing:-.02em;margin-bottom:12px}
+p{margin:0 0 12px}
+:focus-visible{outline:3px solid var(--azure);outline-offset:3px}
+
+/* ---------- Text animation system (class .in is added when an element scrolls into view) ----------
+   chars: letter-by-letter | words: word-by-word | type: typewriter | bars: bar chart | flow: reaction flow */
+.wd{display:inline-block;white-space:nowrap}
+.w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.14em;margin-bottom:-.14em}
+.w>span{display:inline-block;opacity:0;filter:blur(8px);transform:translateY(120%) rotate(5deg);
+  transition:transform .9s cubic-bezier(.2,.9,.25,1.15),opacity .6s,filter .7s;
+  transition-delay:calc(var(--i)*var(--st,40ms) + var(--d,0ms))}
+.in .w>span{opacity:1;filter:none;transform:none}
+.rule{height:4px;width:150px;margin:20px 0;border-radius:4px;background:var(--azure);transform:scaleX(0);transform-origin:left;
+  transition:transform 1.1s cubic-bezier(.2,.9,.25,1) .9s}
+h1.in+.rule{transform:none}
+.typing::after{content:"";display:inline-block;width:2px;height:1em;margin-inline-start:2px;vertical-align:-2px;background:var(--azure);animation:blink .6s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}}
+
+/* ---------- Navigation ---------- */
+.nav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--mist)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:56px}
+.brand{font-weight:800;letter-spacing:-.01em}
+.nav a{color:var(--ink);text-decoration:none;font-weight:600;font-size:15px;margin-inline-start:22px;opacity:.7;transition:opacity .2s}
+.nav a:hover{opacity:1}
+.nav .pg{position:absolute;left:0;bottom:-1px;height:3px;width:0;background:var(--azure)}
+
+/* ---------- Hero ---------- */
+.hero{background:linear-gradient(var(--ice),var(--white));overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1.25fr 1fr;gap:20px;align-items:center;padding-top:56px;padding-bottom:56px}
+.hero p{max-width:52ch;font-size:18px}
+.art{position:relative;justify-self:center;width:min(300px,70vw)}
+.art svg{display:block;width:100%;height:auto}
+.wv{animation:wave 4s linear infinite}.wv2{animation:wave 6s linear infinite reverse}
+@keyframes wave{to{transform:translateX(-120px)}}
+.bub{fill:#fff;opacity:.85;animation:up 4s ease-in infinite}
+@keyframes up{from{transform:translateY(0);opacity:.9}to{transform:translateY(-120px);opacity:0}}
+.ion{position:absolute;font-weight:800;font-size:15px;background:#fff;border:2px solid var(--sky);border-radius:999px;padding:2px 12px;
+  animation:float 5s ease-in-out infinite alternate}
+@keyframes float{from{transform:translateY(0)}to{transform:translateY(-16px)}}
+
+/* ---------- Chapters ---------- */
+.ch{padding:72px 0;border-top:1px solid var(--mist)}
+.eb{display:inline-block;background:var(--mist);font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:4px 14px;margin-bottom:14px}
+.ch .lead{max-width:62ch;font-size:18px;margin-bottom:28px}
+
+/* ---------- Lab: stage + step list ---------- */
+.lab{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:28px;align-items:start}
+.stage{position:relative;border-radius:20px;overflow:hidden;background:var(--ice);box-shadow:0 0 0 2px var(--sky)}
+.stage svg{display:block;width:100%;height:auto}
+.prog{position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--mist)}
+.prog i{display:block;height:100%;width:0;background:var(--azure);transition:width .6s cubic-bezier(.2,.9,.25,1)}
+.clock{position:absolute;top:12px;inset-inline-end:12px;background:#fff;border:2px solid var(--sky);border-radius:12px;padding:2px 14px;
+  font-weight:800;font-size:26px;opacity:0;transform:scale(.85);transition:opacity .3s,transform .4s cubic-bezier(.2,.9,.25,1.3)}
+.clock small{display:block;font-size:11px;font-weight:400;line-height:1.2;padding-top:4px;text-align:center}
+.clock.on{opacity:1;transform:none}
+.ctrl{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.ctrl button{font:inherit;font-weight:600;color:var(--ink);background:#fff;border:2px solid var(--sky);border-radius:10px;padding:6px 16px;cursor:pointer;transition:background .2s,transform .2s}
+.ctrl button:hover{background:var(--mist);transform:translateY(-2px)}
+.ctrl .main{background:var(--azure);border-color:var(--azure);color:#fff}
+.ctrl .main:hover{background:#49a9de}
+ol.steps{list-style:none;margin:0;padding:0;border-inline-start:3px solid var(--sky)}
+ol.steps button{all:unset;display:block;box-sizing:border-box;width:100%;cursor:pointer;padding:8px 16px;font-weight:700;font-size:15.5px;opacity:.55;
+  transition:opacity .25s,transform .45s cubic-bezier(.2,.9,.25,1.2)}
+ol.steps button:hover{opacity:1}
+ol.steps li.on{background:var(--mist);border-inline-start:3px solid var(--azure);margin-inline-start:-3px}
+ol.steps li.on button{opacity:1;transform:translateX(8px)}
+ol.steps .d{display:none;padding:0 16px 12px;font-size:15px;min-height:3.6em}
+ol.steps li.on .d{display:block}
+
+/* ---------- SVG scene parts ---------- */
+.v{transition:transform 1.1s cubic-bezier(.2,.9,.25,1),opacity .6s}
+.liq{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(var(--lv,0));transition:transform 1.5s ease,fill 1.5s ease}
+.dr,.pr{opacity:0;transition:opacity .4s}
+.v.fd .dr,.v.fp .pr{opacity:1}
+.dp{fill:var(--azure);animation:fall 1s infinite}
+.dp:nth-child(3){animation-delay:.33s}.dp:nth-child(4){animation-delay:.66s}
+@keyframes fall{0%{transform:translateY(0);opacity:0}15%,85%{opacity:1}100%{transform:translateY(105px);opacity:0}}
+.stream{fill:var(--sky);transform-box:fill-box;transform-origin:50% 0;animation:stream 1.8s ease-out infinite}
+@keyframes stream{0%{transform:scaleY(0)}30%,80%{transform:scaleY(1)}100%{transform:scaleY(0)}}
+.st{opacity:0;transform:translateY(-16px);transition:opacity .5s,transform .6s cubic-bezier(.2,.9,.25,1.3)}
+.v.stp .st{opacity:1;transform:none}
+.crack{opacity:0;stroke-dasharray:1;stroke-dashoffset:1}
+.v.crk .crack{opacity:1;animation:draw .8s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.bact{opacity:0;transition:opacity .5s}
+.v[data-bact="1"] .bact,.v[data-bact="halt"] .bact{opacity:1}
+.bact circle{fill:var(--ink);animation:drift 2.6s ease-in-out infinite alternate;transition:fill .6s}
+.v[data-bact="halt"] .bact circle{fill:var(--azure);animation-play-state:paused}
+@keyframes drift{from{transform:translate(-5px,3px)}to{transform:translate(6px,-5px)}}
+.v.shake .in{transform-box:fill-box;transform-origin:50% 100%;animation:shake .45s ease-in-out 5}
+@keyframes shake{25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
+.ly{opacity:0;transition:opacity .5s;pointer-events:none}
+.ly.on{opacity:1}
+.ly.on .ck{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .8s .3s forwards}
+.hg{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(var(--hg,.3));transition:transform 2s ease}
+.dv{animation:dashline 1s linear infinite}
+@keyframes dashline{to{stroke-dashoffset:-12}}
+.bd{opacity:0;transform-box:fill-box;transform-origin:50% 0;transform:scale(.7) translateY(12px);transition:opacity .4s,transform .6s cubic-bezier(.2,.9,.25,1.4)}
+.bd.on{opacity:1;transform:none}
+.chip{transform:translate(var(--x),var(--y));animation:pop .6s cubic-bezier(.2,.9,.25,1.4) both;animation-delay:calc(var(--k)*180ms)}
+@keyframes pop{from{opacity:0;transform:translate(var(--x),var(--y)) scale(.6)}to{opacity:1;transform:translate(var(--x),var(--y)) scale(1)}}
+.chip rect{fill:#fff;stroke:var(--sky);stroke-width:2}
+.chip text{font-size:13px;font-weight:700;fill:var(--ink)}
+
+/* ---------- Reaction flow ---------- */
+.flow{display:flex;align-items:stretch;gap:0;margin:40px 0 8px}
+.flow>*{opacity:0;transform:translateY(16px) scale(.96);transition:opacity .6s,transform .7s cubic-bezier(.2,.9,.25,1.2);transition-delay:calc(var(--k)*170ms)}
+.flow.in>*{opacity:1;transform:none}
+.node{flex:0 1 190px;background:var(--ice);border:2px solid var(--sky);border-radius:16px;padding:14px 16px}
+.node b{display:block;font-size:19px;font-weight:800}
+.node.pk{background:var(--pinkbg);border-color:var(--pinkline)}
+.node.pk b{color:var(--pink)}
+.node span{font-size:14px;opacity:.85;line-height:1.4;display:block}
+i.arr{flex:1;min-width:34px;height:4px;align-self:center;position:relative;border-radius:4px;
+  background:repeating-linear-gradient(90deg,var(--azure) 0 10px,transparent 10px 20px);background-size:40px 4px;animation:dash 1.2s linear infinite}
+i.arr::after{content:"";position:absolute;right:-2px;top:-5px;border:7px solid transparent;border-left:11px solid var(--azure);border-right:0}
+@keyframes dash{to{background-position:40px 0}}
+.eq{background:var(--ice);border:1px solid var(--sky);border-radius:10px;padding:8px 14px;font-size:15px;margin:14px 0 0;min-height:2.7em;max-width:520px}
+
+/* ---------- Result bars ---------- */
+.bars{margin-top:36px;max-width:760px}
+.bar{display:grid;grid-template-columns:150px 1fr 110px;gap:14px;align-items:center;margin:10px 0;font-weight:600}
+.bar .t{height:16px;background:var(--mist);border-radius:99px;overflow:hidden}
+.bar .t i{display:block;height:100%;width:0;border-radius:99px;background:var(--s);
+  transition:width 1.4s cubic-bezier(.2,.9,.25,1);transition-delay:calc(var(--k)*140ms)}
+.bars.in .t i{width:var(--w)}
+.bar b{font-weight:800}
+
+/* ---------- Video + footer ---------- */
+video{width:100%;max-height:560px;border-radius:16px;background:var(--ice);box-shadow:0 0 0 2px var(--sky)}
+.novideo{display:none;border:2px dashed var(--sky);border-radius:14px;padding:18px;background:var(--ice)}
+footer{padding:26px 0 40px;font-size:14px;border-top:1px solid var(--mist)}
+
+@media(max-width:860px){
+  .lab,.hero .wrap{grid-template-columns:1fr}
+  .flow{flex-direction:column}.node{flex:none}
+  i.arr{width:4px;height:34px;min-width:0;margin-inline-start:24px;
+    background:repeating-linear-gradient(180deg,var(--azure) 0 10px,transparent 10px 20px);background-size:4px 40px;animation-name:dashY}
+  i.arr::after{right:auto;top:auto;bottom:-2px;left:-5px;border:7px solid transparent;border-top:11px solid var(--azure);border-bottom:0}
+  .bar{grid-template-columns:1fr 90px}.bar .t{grid-column:1/-1;order:3}
+  .nav a:not(:last-child){display:none}
+}
+@keyframes dashY{to{background-position:0 40px}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important;transition-delay:0ms!important}}
+</style>
+</head>
+<body>
+
+<!-- Sticky navigation with a scroll-progress line -->
+<nav class="nav">
+  <div class="wrap">
+    <span class="brand">NO₂⁻ Lab</span>
+    <div><a href="#c1">Sample protocol</a><a href="#c2">Test A</a><a href="#c3">Test B</a><a href="#video">Video</a></div>
+  </div>
+  <div class="pg" id="pg"></div>
+</nav>
+
+<!-- Hero: animated title + animated water drop -->
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <h1 data-a="chars">From sample bottle to nitrite result</h1>
+      <div class="rule"></div>
+      <p data-a="words" style="--d:700ms">A visual guide to the lab workflow: how a drinking-water sample is collected and preserved, how nitrite is detected with a color reaction, and how its concentration is estimated from time.</p>
+    </div>
+    <div class="art" aria-hidden="true">
+      <svg viewBox="0 0 240 300">
+        <defs><clipPath id="dc"><path d="M120 10C120 10 20 130 20 190a100 100 0 0 0 200 0C220 130 120 10 120 10z"/></clipPath></defs>
+        <g clip-path="url(#dc)">
+          <rect width="240" height="300" fill="#f0f9ff"/>
+          <g class="wv"><path d="M-240 170q60-24 120 0t120 0 120 0 120 0 120 0V320H-240z" fill="#9fd7f6"/></g>
+          <g class="wv2"><path d="M-240 190q60-20 120 0t120 0 120 0 120 0 120 0V320H-240z" fill="#5bb8ec" opacity=".75"/></g>
+          <circle class="bub" cx="90" cy="260" r="6"/><circle class="bub" cx="140" cy="270" r="4" style="animation-delay:1.2s"/>
+          <circle class="bub" cx="170" cy="255" r="7" style="animation-delay:2.2s"/><circle class="bub" cx="115" cy="275" r="5" style="animation-delay:3s"/>
+        </g>
+        <path d="M120 10C120 10 20 130 20 190a100 100 0 0 0 200 0C220 130 120 10 120 10z" fill="none" stroke="#0d4d75" stroke-width="4"/>
+      </svg>
+      <span class="ion" style="top:6%;left:-4%">NO₂⁻</span>
+      <span class="ion" style="top:38%;right:-6%;animation-delay:.8s">I⁻</span>
+      <span class="ion" style="bottom:10%;left:-8%;animation-delay:1.6s">H⁺</span>
+    </div>
+  </div>
+</header>
+
+<!-- Chapter 1: sample collection protocol (10 animated steps) -->
+<section class="ch" id="c1"><div class="wrap">
+  <span class="eb">Chapter 1 · Sample collection</span>
+  <h2 data-a="words" style="--st:55ms">How does the sample stay chemically pristine?</h2>
+  <p class="lead" data-a="words" style="--st:20ms">Without strict rules, bacteria and temperature shifts destroy the sample before testing even begins. Ten steps keep the water exactly as collected until it reaches the lab.</p>
+  <div class="lab" id="lab-p"></div>
+</div></section>
+
+<!-- Chapter 2: qualitative detection -->
+<section class="ch" id="c2"><div class="wrap">
+  <span class="eb">Chapter 2 · Test A</span>
+  <h2 data-a="words" style="--st:55ms">Is nitrite present?</h2>
+  <p class="lead" data-a="words" style="--st:20ms">Qualitative detection with the sulphanilic acid + alpha-naphthylamine method. A pink azo dye forms only when nitrite is in the water.</p>
+  <div class="lab" id="lab-a"></div>
+  <div class="flow" data-a="flow" aria-label="Reaction pathway of test A">
+    <div class="node"><b>NO₂⁻</b><span>Nitrite from the sample, in acid</span></div><i class="arr"></i>
+    <div class="node"><b>Diazonium salt</b><span>Forms with sulphanilic acid</span></div><i class="arr"></i>
+    <div class="node"><b>+ alpha-naphthylamine</b><span>Couples with the diazonium salt</span></div><i class="arr"></i>
+    <div class="node pk"><b>Pink azo dye</b><span>Pink product: nitrite present</span></div>
+  </div>
+</div></section>
+
+<!-- Chapter 3: quantitative estimation -->
+<section class="ch" id="c3"><div class="wrap">
+  <span class="eb">Chapter 3 · Test B</span>
+  <h2 data-a="words" style="--st:55ms">How much nitrite is there?</h2>
+  <p class="lead" data-a="words" style="--st:20ms">Quantitative estimation with the zinc iodide starch method. The faster the blue color appears, the higher the nitrite concentration.</p>
+  <div class="lab" id="lab-b"></div>
+  <div class="flow" data-a="flow" aria-label="Reaction pathway of test B">
+    <div class="node"><b>NO₂⁻ + I⁻ + H⁺</b><span>Nitrite meets iodide in acid</span></div><i class="arr"></i>
+    <div class="node"><b>I₂</b><span>Nitrite oxidizes iodide to iodine</span></div><i class="arr"></i>
+    <div class="node"><b>+ starch</b><span>Iodine binds to the starch</span></div><i class="arr"></i>
+    <div class="node"><b>Blue complex</b><span>Faster blue = more nitrite</span></div>
+  </div>
+  <div class="eq" data-a="type">2 NO₂⁻ + 2 I⁻ + 4 H⁺ → 2 NO + I₂ + 2 H₂O</div>
+  <div class="bars" data-a="bars" aria-label="Nitrite concentration by time until blue color">
+    <div class="bar" style="--w:100%;--s:#1e86c4"><span>Blue directly</span><span class="t"><i></i></span><span><b data-n="0.50">0.50</b> mg/L</span></div>
+    <div class="bar" style="--w:60%;--s:#3aa5e2"><span>Blue after 30 s</span><span class="t"><i></i></span><span><b data-n="0.30">0.30</b> mg/L</span></div>
+    <div class="bar" style="--w:30%;--s:#6cc0ee"><span>Blue after 1 min</span><span class="t"><i></i></span><span><b data-n="0.15">0.15</b> mg/L</span></div>
+    <div class="bar" style="--w:20%;--s:#9fd7f6"><span>Blue after 3 min</span><span class="t"><i></i></span><span><b data-n="0.10">0.10</b> mg/L</span></div>
+    <div class="bar" style="--w:10%;--s:#cbe9fa"><span>Blue after 10 min</span><span class="t"><i></i></span><span><b data-n="0.05">0.05</b> mg/L</span></div>
+  </div>
+</div></section>
+
+<!-- Original video: its source is set in JavaScript from VIDEO_PATH (do not put the path here) -->
+<section class="ch" id="video"><div class="wrap">
+  <h2 data-a="words" style="--st:55ms">The original video</h2>
+  <p class="lead" data-a="words" style="--st:20ms">The same protocol and both experiments as recorded, to review the animated walkthrough above.</p>
+  <video id="vid" controls preload="metadata" playsinline></video>
+  <div class="novideo" id="novideo">The video could not be loaded. Make sure the file is uploaded next to <b>index.html</b> on GitHub and that <b>VIDEO_PATH</b> at the bottom of this page matches its name.</div>
+</div></section>
+
+<footer><div class="wrap">This page is an animated walkthrough based on the attached lab video.</div></footer>
+
+<script>
+/* ============================================================
+   VIDEO PATH
+   - Relative path to the video, in the same GitHub folder as index.html
+   - File names are case-sensitive on GitHub Pages
+   - If the main name fails, the fallbacks are tried automatically
+   ============================================================ */
+const VIDEO_PATH = "chmistry-vid.mp4";
+const VIDEO_FALLBACKS = ["chmistry-vid.mp4.mp4", "chmistry-vid.MP4"];
+
+/* ---------- Palette: liquid shades 0-5 are blue (clear to deep); index 6 is the pink azo dye of test A ---------- */
+const C = ['#eaf6fd','#cbe9fa','#9fd7f6','#6cc0ee','#3aa5e2','#1e86c4','#f0508a'];
+const INK = '#0d4d75', SKY = '#bfe5fa';
+const $ = s => document.querySelector(s);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ============================================================
+   Lab data. Each step can set: v (per-vessel state, carried forward), fx ('p' pour / 'd' drops),
+   fxFor (vessel indexes), chips ([x, y, text]), ly (layers), hg (thermometer), shake, timer, reveal,
+   final, badges, cycle (counter chip) and later ([ms, patch]).
+   Vessel state: x, on, lv (liquid level 0-1), c (color index), stopper, crack, bact (1 | 'halt'), lab.
+   ============================================================ */
+const T = (lv, c, n) => Array.from({length: n}, () => ({lv, c}));
+const LABS = {
+  /* ----- Chapter 1: sample collection protocol ----- */
+  p: {
+    kind: 'bottle', label: 'Animated sample bottle protocol',
+    vessels: [{x:400, lab:'NITRITE'}, {x:560, on:0, lab:'NITRITE'}, {x:690, on:0, lab:'BACT.'}],
+    steps: [
+      {t:'Why a strict protocol?', d:'Without strict rules, bacteria and temperature shifts destroy the sample before testing even begins.',
+        v:[{x:330, lv:.69, c:1, bact:1}], ly:['thermo'], hg:.95, chips:[[170,95,'Bacteria multiply'],[690,70,'Temperature shifts']]},
+      {t:'The container', d:'It starts with one very specific container: a transparent, colorless glass bottle assigned for nitrite analysis.',
+        v:[{x:400, lv:0, c:0, bact:0}], chips:[[400,60,'Transparent, colorless glass']]},
+      {t:'Ground glass stopper, completely dry', d:'Fitted with a ground glass stopper, the bottle can\'t just be clean: it must be completely dry.',
+        v:[{stopper:1}], chips:[[590,95,'Ground glass stopper'],[210,170,'Completely dry']]},
+      {t:'Rinse with distilled water', d:'It is rinsed several times with distilled water to strip away any baseline contaminants.',
+        v:[{stopper:0, lv:.22, c:1}], fx:'p', fxFor:[0], chips:[[580,110,'Distilled H₂O']], cycle:['Rinse 1/3','Rinse 2/3','Rinse 3/3'], cycleAt:[580,160]},
+      {t:'Isolation', d:'It must be kept completely separate from bacteriological testing bottles to guarantee zero cross-contamination.',
+        v:[{x:190, lv:0, c:0, stopper:1}, {on:1, x:560, lab:'BACT.', lv:.5, c:2}, {on:1, x:690, lab:'BACT.', lv:.5, c:2}], ly:['divider'],
+        chips:[[190,62,'Nitrite analysis bottle'],[625,62,'Bacteriological bottles'],[400,30,'Zero cross-contamination']]},
+      {t:'Collecting the water', d:'Filling it to the brim seems logical, but you actually have to leave an empty air gap at the top.',
+        v:[{x:230, lv:.97, c:1, stopper:0, lab:'NITRITE'}, {on:1, x:560, lab:'NITRITE', lv:.62, c:1}, {on:0}],
+        chips:[[230,40,'✗ Filled to the brim'],[560,40,'✓ Leave an air gap']]},
+      {t:'Why the air gap?', d:'The space allows for mixing and prevents thermal expansion from shattering the glass on a long journey.',
+        v:[{crack:1}], ly:['thermo'], hg:1, chips:[[210,40,'✗ No air gap: glass can shatter'],[570,40,'✓ Air gap: room to mix and expand']]},
+      {t:'The chemical lockdown', d:'A specific preservative is added to halt bacterial degradation during transit, freezing the nitrate and nitrite levels exactly where they are.',
+        v:[{x:400, lv:.62, crack:0, bact:1}, {on:0}], fx:'d', fxFor:[0], chips:[[200,95,'Bacteria degrade nitrate & nitrite']],
+        later:[2600, {v:[{bact:'halt'}], chips:[[200,95,'✓ Degradation halted'],[600,95,'Levels frozen as collected']]}]},
+      {t:'The preservative', d:'That additive is boric acid (H₃BO₃).', v:[{on:0}], ly:['jar'], chips:[[400,70,'Boric acid · H₃BO₃']]},
+      {t:'The complete protocol', d:'Exact container cleaning, strict physical separation, adequate air spacing and a targeted chemical lockdown deliver a perfectly preserved sample and a flawlessly accurate nitrite analysis.',
+        v:[{on:1, x:230, lv:.62, c:1, stopper:1, bact:0}], ly:['check'],
+        chips:[[570,70,'✓ Exact container cleaning'],[570,110,'✓ Strict physical separation'],[570,150,'✓ Adequate air spacing'],[570,190,'✓ Targeted chemical lockdown']]}
+    ]
+  },
+  /* ----- Chapter 2: qualitative detection ----- */
+  a: {
+    kind: 'tube', label: 'Animated qualitative nitrite test', dur: 3500,
+    vessels: [{x:200, name:'Water sample 1'}, {x:600, name:'Water sample 2'}],
+    steps: [
+      {t:'Add 50 ml of water sample', d:'In a colorless cylinder.', fx:'p', v:T(.6,0,2)},
+      {t:'Add 1 ml of sulphanilic acid reagent', d:'Reagent: 0.6 g acid + 70 ml hot distilled water + 20 ml conc. HCl, diluted to 100 ml.', fx:'d'},
+      {t:'Shake and mix well', d:'Swirl so the reagent spreads evenly through the sample.', shake:1},
+      {t:'Wait 1 to 2 minutes', d:'Time-lapse: the timer runs up to 01:54.', timer:114},
+      {t:'Add 1 ml of alpha-naphthylamine in HCl', d:'Pink color develops if nitrite is present.', fx:'d', v:[{c:6}, {c:0}]},
+      {t:'Result', d:'Pink color indicates the presence of nitrite (+ve NO₂⁻). Sample 2 stays colorless: nitrite absent.',
+        v:[{lv:.6, c:6}, {lv:.6, c:0}], badges:[['Pink color','Nitrite present (+ve NO₂⁻)'],['No color','Nitrite absent (−ve)']]}
+    ]
+  },
+  /* ----- Chapter 3: quantitative estimation ----- */
+  b: {
+    kind: 'tube', label: 'Animated quantitative nitrite test', dur: 6000,
+    vessels: [0,1,2,3,4].map(i => ({x:80 + 160*i, name:'Tube ' + (i+1)})),
+    thr: [0,30,60,180,600],   // seconds at which each tube turns blue
+    cols: [5,4,3,2,1],        // color index per tube (strongest first)
+    badges: [['Blue directly','0.50 mg/L'],['Blue after 30 s','0.30 mg/L'],['Blue after 1 min','0.15 mg/L'],['Blue after 3 min','0.10 mg/L'],['Blue after 10 min','0.05 mg/L']],
+    steps: [
+      {t:'Add 10 ml of water sample', d:'In the test tube.', fx:'p', v:T(.45,0,5)},
+      {t:'Add 3–5 drops of conc. H₂SO₄', d:'Acidifies the sample so nitrite can react with iodide.', fx:'d'},
+      {t:'Add 0.5 ml of zinc iodide starch solution', d:'Supplies the iodide and the starch indicator.', fx:'d'},
+      {t:'Record the time until blue color appears', d:'NO₂⁻ oxidizes iodide to iodine; iodine + starch = blue.', timer:600, reveal:1},
+      {t:'Final result', d:'Faster blue color = higher nitrite concentration.', final:1}
+    ]
+  }
+};
+
+/* ============================================================
+   Text animation helpers
+   ============================================================ */
+// Split an element's text into animated spans (letters or words). Words never break across lines.
+function split(el, mode) {
+  const text = el.textContent.trim(); let i = 0;
+  el.setAttribute('aria-label', text);
+  el.innerHTML = text.split(/\s+/).map(word =>
+    '<span class="wd">' + (mode === 'chars' ? [...word] : [word]).map(p => `<span class="w" aria-hidden="true"><span style="--i:${i++}">${p}</span></span>`).join('') + '</span>'
+  ).join(' ');
+  if (mode === 'chars') el.style.setProperty('--st', '26ms');
+}
+// Typewriter effect with a blinking caret
+function typeText(el, text, speed = 14) {
+  clearInterval(el._t); el.textContent = '';
+  if (reduce) { el.textContent = text; return; }
+  el.classList.add('typing'); let i = 0;
+  el._t = setInterval(() => {
+    el.textContent = text.slice(0, ++i);
+    if (i >= text.length) { clearInterval(el._t); el.classList.remove('typing'); }
+  }, speed);
+}
+// Count numbers up from zero, one after another
+function countUp(root) {
+  root.querySelectorAll('[data-n]').forEach((n, k) => {
+    const v = parseFloat(n.dataset.n), dec = (n.dataset.n.split('.')[1] || '').length;
+    setTimeout(() => {
+      const t0 = performance.now();
+      const step = now => {
+        const p = Math.min(1, (now - t0) / 1300);
+        n.textContent = (v * (1 - Math.pow(1 - p, 3))).toFixed(dec);
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }, reduce ? 0 : 350 + k * 140);
+  });
+}
+function reveal(el) {
+  el.classList.add('in');
+  if (el.dataset.a === 'type') typeText(el, el.dataset.t, 24);
+  if (el.dataset.a === 'bars') countUp(el);
+}
+const io = new IntersectionObserver(es => es.forEach(en => {
+  if (en.isIntersecting) { io.unobserve(en.target); reveal(en.target); }
+}), {threshold: .2});
+
+function initTextAnimations() {
+  document.querySelectorAll('[data-a]').forEach(el => {
+    const m = el.dataset.a;
+    if (m === 'chars' || m === 'words') split(el, m);
+    if (m === 'type') { el.dataset.t = el.textContent; el.textContent = ''; }
+    if (m === 'flow') [...el.children].forEach((c, k) => c.style.setProperty('--k', k));
+    if (m === 'bars') {
+      el.querySelectorAll('.bar').forEach((b, k) => b.style.setProperty('--k', k));
+      el.querySelectorAll('[data-n]').forEach(n => { n.textContent = (0).toFixed((n.dataset.n.split('.')[1] || '').length); });
+    }
+    reduce ? reveal(el) : io.observe(el);
+  });
+}
+
+/* ============================================================
+   Lab engine: builds the SVG scene + step list and plays the steps
+   ============================================================ */
+const DOTS = [[-28,-100],[8,-108],[30,-90],[-14,-88],[-32,-66],[26,-62],[-4,-40],[18,-34],[-26,-30],[32,-20],[-10,-16],[6,-70],[-36,-48],[14,-98]];
+const fmt = s => { s = Math.round(s); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+
+function createLab(key, cfg) {
+  const mount = $('#lab-' + key), n = cfg.vessels.length, bottle = cfg.kind === 'bottle';
+  const tw = n <= 2 ? 78 : 58, top = bottle ? -196 : -190, bw = 800 / n - 20;
+  const timed = cfg.steps.some(s => s.timer);
+
+  mount.innerHTML = `<div>
+      <div class="stage"><svg viewBox="0 0 800 390" role="img" aria-label="${cfg.label}"></svg>
+        ${timed ? '<div class="clock"><small>Timer (time-lapse)</small><span>00:00</span></div>' : ''}<div class="prog"><i></i></div></div>
+      <div class="ctrl"><button class="main" data-c="play">Auto play</button><button data-c="prev">Previous</button><button data-c="next">Next</button><button data-c="re">Restart</button></div>
+    </div><ol class="steps"></ol>`;
+  const svg = mount.querySelector('svg'), clock = mount.querySelector('.clock'), clockT = clock && clock.querySelector('span');
+  const prog = mount.querySelector('.prog i'), list = mount.querySelector('.steps'), playBtn = mount.querySelector('[data-c=play]');
+
+  /* --- static scene: backdrop, bench, vessels, extra layers, chips --- */
+  const vessel = (v, i) => {
+    const body = bottle
+      ? `<clipPath id="${key}cp${i}"><rect x="-44" y="-122" width="88" height="122" rx="22"/><rect x="-15" y="-176" width="30" height="60"/></clipPath>
+         <g clip-path="url(#${key}cp${i})"><rect class="liq" x="-44" y="-176" width="88" height="176" fill="${C[0]}" style="--lv:0"/></g>
+         <g class="bact">${DOTS.map((d, k) => `<circle cx="${d[0]}" cy="${d[1]}" r="3.5" style="animation-delay:-${(k * .37).toFixed(2)}s"/>`).join('')}</g>
+         <rect x="-44" y="-122" width="88" height="122" rx="22" fill="none" stroke="${INK}" stroke-width="2.5"/>
+         <path d="M-15 -176V-118M15 -176V-118" stroke="${INK}" stroke-width="2.5" fill="none"/>
+         <rect x="-21" y="-184" width="42" height="9" rx="3" fill="#fff" stroke="${INK}" stroke-width="2.5"/>
+         <rect x="-30" y="-72" width="60" height="26" rx="4" fill="#fff" stroke="${SKY}" stroke-width="2"/>
+         <text class="vl" y="-54" text-anchor="middle" font-size="11" font-weight="800" fill="${INK}">${v.lab || ''}</text>
+         <path class="crack" pathLength="1" d="M-8 -118l10 20-14 16 12 22-8 18" fill="none" stroke="${INK}" stroke-width="2.5" stroke-linecap="round"/>
+         <g class="st"><path d="M-15 -186l-5 -20h40l-5 20z" fill="${SKY}" stroke="${INK}" stroke-width="2.5"/></g>`
+      : `<rect class="liq" x="${-tw/2 + 3}" y="-187" width="${tw - 6}" height="184" rx="9" fill="${C[0]}" style="--lv:0"/>
+         <rect x="${-tw/2}" y="-190" width="${tw}" height="190" rx="12" fill="none" stroke="${INK}" stroke-width="2.5"/>
+         ${[0,1,2,3].map(k => `<line x1="${tw/2}" x2="${tw/2 - 10}" y1="${-160 + k*36}" y2="${-160 + k*36}" stroke="${INK}" stroke-width="1.5"/>`).join('')}`;
+    const name = v.name ? `<text y="28" text-anchor="middle" font-size="${n <= 2 ? 20 : 16}" font-weight="700" fill="${INK}">${v.name}</text>
+      <g class="bd" id="${key}bd${i}"><rect x="${-bw/2}" y="40" width="${bw}" height="58" rx="10" fill="#fff" stroke="${INK}" stroke-width="1.5"/>
+        <text id="${key}bt${i}a" y="64" text-anchor="middle" font-size="${n <= 2 ? 17 : 13}" font-weight="600" fill="${INK}"></text>
+        <text id="${key}bt${i}b" y="86" text-anchor="middle" font-size="${n <= 2 ? 17 : 14}" font-weight="800" fill="${INK}"></text></g>` : '';
+    return `<g class="v" id="${key}v${i}"><g class="in">${body}</g>${name}
+      <g class="dr" transform="translate(0 ${top - 66})"><rect x="-6" y="6" width="12" height="30" rx="5" fill="#fff" stroke="${INK}" stroke-width="2"/>
+        <circle cy="4" r="10" fill="${SKY}" stroke="${INK}" stroke-width="2"/><circle class="dp" cy="48" r="4"/><circle class="dp" cy="48" r="4"/><circle class="dp" cy="48" r="4"/></g>
+      <g class="pr" transform="translate(0 ${top - 66})"><path d="M-22 4h44l-8 34h-28z" fill="#fff" stroke="${INK}" stroke-width="2"/><rect class="stream" x="-4" y="38" width="8" height="190" rx="4"/></g></g>`;
+  };
+  const extra = bottle ? `
+    <g class="ly" data-ly="thermo" transform="translate(725 274)"><rect x="-8" y="-170" width="16" height="164" rx="8" fill="#fff" stroke="${INK}" stroke-width="2.5"/>
+      <rect class="hg" x="-4" y="-164" width="8" height="150" rx="4" fill="${C[5]}"/><circle cy="-4" r="15" fill="${C[5]}" stroke="${INK}" stroke-width="2.5"/>
+      ${[0,1,2,3].map(k => `<line x1="8" x2="18" y1="${-150 + k*34}" y2="${-150 + k*34}" stroke="${INK}" stroke-width="1.5"/>`).join('')}</g>
+    <g class="ly" data-ly="jar" transform="translate(400 274)"><rect x="-60" y="-130" width="120" height="130" rx="16" fill="#fff" stroke="${INK}" stroke-width="2.5"/>
+      <rect x="-64" y="-152" width="128" height="26" rx="7" fill="${C[3]}" stroke="${INK}" stroke-width="2.5"/>
+      <rect x="-44" y="-100" width="88" height="58" rx="6" fill="#f0f9ff" stroke="${SKY}" stroke-width="2"/>
+      <text y="-74" text-anchor="middle" font-size="12" font-weight="800" fill="${INK}">BORIC ACID</text><text y="-54" text-anchor="middle" font-size="15" font-weight="800" fill="${INK}">H₃BO₃</text></g>
+    <g class="ly" data-ly="divider"><line class="dv" x1="400" x2="400" y1="70" y2="274" stroke="${INK}" stroke-width="2.5" stroke-dasharray="6 6"/></g>
+    <g class="ly" data-ly="check" transform="translate(360 150)"><circle r="34" fill="${C[3]}"/><path class="ck" pathLength="1" d="M-15 2l11 12 22-26" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></g>` : '';
+
+  svg.innerHTML = `<rect width="800" height="390" fill="#f0f9ff"/>
+    <rect x="30" y="40" width="64" height="8" rx="3" fill="${SKY}"/><rect x="706" y="40" width="64" height="8" rx="3" fill="${SKY}"/>
+    <rect x="40" y="22" width="14" height="18" rx="3" fill="${C[3]}"/><rect x="60" y="22" width="14" height="18" rx="3" fill="${C[2]}"/>
+    <rect x="726" y="22" width="14" height="18" rx="3" fill="${C[2]}"/><rect x="746" y="22" width="14" height="18" rx="3" fill="${C[3]}"/>
+    <rect y="278" width="800" height="112" fill="#dff2fd"/><rect y="274" width="800" height="6" fill="${SKY}"/>
+    ${extra}${cfg.vessels.map(vessel).join('')}<g id="${key}cyc"></g><g id="${key}chips"></g>`;
+
+  list.innerHTML = cfg.steps.map((s, i) => `<li><button data-i="${i}">${i + 1}. ${s.t}</button><div class="d" data-t="${s.d}"></div></li>`).join('');
+
+  /* --- helpers --- */
+  const base = cfg.vessels.map(v => ({lv:0, c:0, on:1, ...v}));
+  const vs = cfg.vessels.map((_, i) => $('#' + key + 'v' + i));
+  const chipsG = $('#' + key + 'chips'), cycG = $('#' + key + 'cyc');
+  const chip = (x, y, t, k) => { const w = Math.round(t.length * 7.4 + 26);
+    return `<g class="chip" style="--x:${x}px;--y:${y}px;--k:${k}"><rect x="${-w/2}" y="-16" width="${w}" height="30" rx="15"/><text y="4" text-anchor="middle">${t}</text></g>`; };
+  const setChips = l => { chipsG.innerHTML = (l || []).map((c, k) => chip(c[0], c[1], c[2], k)).join(''); };
+  const paint = (i, lv, c) => { const l = vs[i].querySelector('.liq'); l.style.setProperty('--lv', lv); l.setAttribute('fill', C[c]); };
+  const badge = (i, a, b, on) => { const g = $('#' + key + 'bd' + i); if (!g) return;
+    $('#' + key + 'bt' + i + 'a').textContent = a; $('#' + key + 'bt' + i + 'b').textContent = b; g.classList.toggle('on', on); };
+  const applyV = (i, s) => {
+    const g = vs[i];
+    g.style.transform = `translate(${s.x}px,274px)`; g.style.opacity = s.on ? 1 : 0;
+    g.classList.toggle('stp', !!s.stopper); g.classList.toggle('crk', !!s.crack); g.dataset.bact = s.bact || 0;
+    paint(i, s.lv, s.c);
+    const lb = g.querySelector('.vl'); if (lb) lb.textContent = s.lab || '';
+  };
+
+  /* --- state --- */
+  const L = {idx: 0, auto: false, vis: false, started: false, t: 0, later: 0, cy: 0, raf: 0};
+  const setLabel = () => { playBtn.textContent = L.auto ? 'Pause' : (L.idx === cfg.steps.length - 1 ? 'Play again' : 'Auto play'); };
+
+  function show(i) {
+    clearTimeout(L.t); clearTimeout(L.later); clearInterval(L.cy); cancelAnimationFrame(L.raf);
+    L.idx = Math.max(0, Math.min(i, cfg.steps.length - 1));
+    const s = cfg.steps[L.idx], last = L.idx === cfg.steps.length - 1;
+
+    /* carry the vessel state forward from step 1 up to this step */
+    const st = base.map(b => ({...b}));
+    for (let k = 0; k <= L.idx; k++) (cfg.steps[k].v || []).forEach((p, j) => { if (p) Object.assign(st[j], p); });
+    st.forEach((v, j) => {
+      applyV(j, v);
+      const use = !s.fxFor || s.fxFor.includes(j);
+      vs[j].classList.toggle('fd', s.fx === 'd' && use); vs[j].classList.toggle('fp', s.fx === 'p' && use);
+      vs[j].classList.toggle('shake', !!s.shake); badge(j, '', '', false);
+    });
+    mount.querySelectorAll('.ly').forEach(l => l.classList.toggle('on', (s.ly || []).includes(l.dataset.ly)));
+    const hg = mount.querySelector('.hg'); if (hg) hg.style.setProperty('--hg', s.hg ?? .3);
+    setChips(s.chips);
+    if (s.cycle) {                                   // counter chip, e.g. "Rinse 1/3"
+      let c = 0; const draw = () => { cycG.innerHTML = chip(s.cycleAt[0], s.cycleAt[1], s.cycle[c], 0); }; draw();
+      L.cy = setInterval(() => { if (++c < s.cycle.length) draw(); else clearInterval(L.cy); }, 1200);
+    } else cycG.innerHTML = '';
+    if (s.later) L.later = setTimeout(() => {         // a second moment inside the same step
+      (s.later[1].v || []).forEach((p, j) => { if (p) { Object.assign(st[j], p); applyV(j, st[j]); } });
+      if (s.later[1].chips) setChips(s.later[1].chips);
+    }, s.later[0]);
+
+    /* result colors + badges for the tube experiments */
+    if (s.badges) s.badges.forEach((b, j) => badge(j, b[0], b[1], true));
+    if (s.final) for (let j = 0; j < n; j++) { paint(j, .45, cfg.cols[j]); badge(j, cfg.badges[j][0], cfg.badges[j][1], true); }
+
+    /* time-lapse timer: reveals tube colors when thresholds (seconds) are passed */
+    if (clock) {
+      clock.classList.toggle('on', !!s.timer); clockT.textContent = fmt(0);
+      if (s.timer) {
+        const t0 = performance.now(), dur = reduce ? 10 : cfg.dur, done = new Set();
+        const tick = now => {
+          const p = Math.min(1, (now - t0) / dur), t = p * s.timer;
+          clockT.textContent = fmt(t);
+          if (s.reveal) cfg.thr.forEach((th, j) => { if (t >= th && !done.has(j)) { done.add(j); paint(j, .45, cfg.cols[j]); badge(j, cfg.badges[j][0], cfg.badges[j][1], true); } });
+          if (p < 1) L.raf = requestAnimationFrame(tick);
+        };
+        L.raf = requestAnimationFrame(tick);
+      }
+    }
+
+    /* step list, typed description and progress bar */
+    [...list.children].forEach((li, k) => {
+      li.classList.toggle('on', k === L.idx);
+      li.firstChild.setAttribute('aria-current', k === L.idx ? 'step' : 'false');
+      const d = li.querySelector('.d');
+      if (k === L.idx) typeText(d, d.dataset.t, 16); else { clearInterval(d._t); d.textContent = ''; d.classList.remove('typing'); }
+    });
+    prog.style.width = ((L.idx + 1) / cfg.steps.length * 100) + '%';
+
+    if (L.auto && L.vis && !last) L.t = setTimeout(() => show(L.idx + 1), s.timer ? cfg.dur + 1400 : (s.later ? s.later[0] + 2600 : s.cycle ? 5200 : 4600));
+    else if (last && L.auto) { L.auto = false; }
+    setLabel();
+  }
+
+  /* --- controls --- */
+  mount.querySelector('.ctrl').onclick = e => {
+    const c = e.target.dataset.c; if (!c) return;
+    if (c === 'play') {
+      if (!L.auto && L.idx === cfg.steps.length - 1) { L.auto = true; show(0); return; }
+      L.auto = !L.auto; show(L.idx);
+    } else { L.auto = c === 're' && !reduce; show(c === 'next' ? L.idx + 1 : c === 'prev' ? L.idx - 1 : 0); }
+  };
+  list.onclick = e => { const b = e.target.closest('button'); if (b) { L.auto = false; show(+b.dataset.i); } };
+
+  /* --- autoplay only while the chapter is on screen --- */
+  new IntersectionObserver(es => es.forEach(en => {
+    L.vis = en.isIntersecting;
+    if (L.vis) { if (!L.started) { L.started = true; L.auto = !reduce; show(0); } else if (L.auto) show(L.idx); }
+    else { clearTimeout(L.t); clearTimeout(L.later); clearInterval(L.cy); cancelAnimationFrame(L.raf); }
+  }), {threshold: .35}).observe(mount);
+
+  show(0);
+}
+
+/* ============================================================
+   Start
+   ============================================================ */
+Object.keys(LABS).forEach(k => createLab(k, LABS[k]));
+initTextAnimations();
+
+/* scroll progress line in the navigation bar */
+const pg = $('#pg');
+addEventListener('scroll', () => { pg.style.width = (scrollY / (document.documentElement.scrollHeight - innerHeight) * 100) + '%'; }, {passive: true});
+
+/* ---------- Video: try VIDEO_PATH, then the fallbacks; show a hint if all fail ---------- */
+const vid = $('#vid'), candidates = [VIDEO_PATH, ...VIDEO_FALLBACKS];
+let tryIndex = 0;
+function loadVideo() {
+  if (tryIndex >= candidates.length) { vid.style.display = 'none'; $('#novideo').style.display = 'block'; return; }
+  vid.src = encodeURI(candidates[tryIndex]);
+}
+vid.addEventListener('error', () => { tryIndex++; loadVideo(); });
+loadVideo();
+</script>
+</body>
+</html>
